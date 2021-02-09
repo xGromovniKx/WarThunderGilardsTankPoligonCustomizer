@@ -1,0 +1,909 @@
+selected_tag:t=""
+bin_dump_file:t=""
+
+mission_settings{
+  atmosphere{
+    pressure:r=760
+    temperature:r=15
+  }
+
+  stars{
+    latitude:r=48
+    longitude:r=44
+    year:i=1940
+    month:i=1
+    day:i=15
+    time:r=12
+  }
+
+  player{
+    army:i=2
+    wing:t="Player"
+  }
+
+  player_teamB{
+    army:i=1
+  }
+
+  mission{
+    name:t="tank_polygon"
+    level:t="levels/avg_training_ground.bin"
+    type:t="singleMission"
+    restoreType:t="attempts"
+    optionalTakeOff:b=no
+    campaign:t="UserMissions"
+    environment:t="Day"
+    weather:t="hazy"
+    missionDebriefing:t=""
+    missionBriefing:t=""
+    pilotName:t="Player"
+
+    tags{
+    }
+
+    missionType{
+      _Dom:b=no
+      _Conq:b=no
+      _Bttl:b=no
+      _Bto:b=no
+      _Flc:b=no
+      _v1_race_straight:b=no
+      _v1_race_inverted:b=no
+      _v2_race_straight:b=no
+      _v2_race_inverted:b=no
+      _Conq1:b=no
+      _Conq2:b=no
+      _Conq3:b=no
+      _Conq4:b=no
+      _Conq5:b=no
+      _Conq6:b=no
+      _DBttl:b=no
+    }
+  }
+
+  spectator_points{
+  }
+
+  cover_points{
+  }
+
+  aiParams{
+    aiEffectivenessViscosity:r=90
+    effectivenessDistances:p2=2500, 7000
+  }
+
+  briefing{
+    place_loc:t=""
+    date_loc:t=""
+    objective_loc:t=""
+    music:t="action_01"
+  }
+}
+
+imports{
+}
+
+triggers{
+  isCategory:b=yes
+  is_enabled:b=yes
+
+  Trigger_Main{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ONE_BY_ONE"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=no
+    }
+
+    events{
+      initMission{
+      }
+    }
+
+    conditions{
+    }
+
+    actions{
+      unitSetProperties{
+        object:t="armada_01"
+        isWinchable:b=no
+        isImmortal:b=yes
+        useAuxWeapon:b=yes
+        aerobaticsSmoke:i=200
+        persistentAerobaticsSmoke:b=yes
+      }
+
+
+      playHint{
+        hintType:t="custom"
+        name:t="restore_ammo_hotkey"
+        action:t="show"
+        shouldFadeOut:b=yes
+        time:r=5
+        priority:i=0
+        item:t="ID_REPAIR_TANK"
+        shouldBlink:b=no
+        targets:t="Player"
+      }
+
+      wait{
+        time:r=6
+      }
+
+      playHint{
+        hintType:t="custom"
+        name:t="restore_targets_hotkey"
+        action:t="show"
+        shouldFadeOut:b=yes
+        time:r=5
+        priority:i=0
+        item:t="ID_AIR_BRAKE"
+        shouldBlink:b=no
+        targets:t="Player"
+      }
+
+      wait{
+        time:r=6
+      }
+
+      playHint{
+        hintType:t="custom"
+        name:t="fastfire_mode_hotkey"
+        action:t="show"
+        shouldFadeOut:b=yes
+        time:r=5
+        priority:i=0
+        item:t="ID_FLAPS"
+        shouldBlink:b=no
+        targets:t="Player"
+      }
+
+      wait{
+        time:r=7
+      }
+
+      __playHint{
+        hintType:t="custom"
+        name:t="Show tank modules"
+        action:t="show"
+        shouldFadeOut:b=yes
+        time:r=5
+        priority:i=0
+        item:t="ID_GEAR"
+        shouldBlink:b=no
+        targets:t="Player"
+      }
+
+      __wait{
+        time:r=5
+      }
+
+      playHint{
+        hintType:t="custom"
+        name:t="teleport_msg"
+        action:t="show"
+        shouldFadeOut:b=yes
+        time:r=5
+        priority:i=0
+        item:t="ID_GEAR"
+        shouldBlink:b=no
+        targets:t="Player"
+      }
+
+      wait{
+        time:r=7
+      }
+
+      playHint{
+        hintType:t="custom"
+        name:t=""
+        action:t="hideCur"
+        shouldFadeOut:b=no
+        time:r=-1
+        priority:i=0
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_RevivePlayer{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ONE_BY_ONE"
+      conditionsType:t="ANY"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=1
+      }
+    }
+
+    conditions{
+      unitWhenStatus{
+        object_type:t="isKilled"
+        check_objects:t="any"
+        object_marking:i=0
+        target_type:t="isAlive"
+        check_period:r=1
+        object:t="Player"
+      }
+    }
+
+    actions{
+      unitSetProperties{
+        object:t="squad_FireBack"
+        object:t="squad_MovingTargets"
+        attack_type:t="return_fire"
+      }
+
+      unitRestore{
+        ressurectIfDead:b=no
+        fullRestore:b=yes
+        target:t="squad_FireBack"
+        target:t="squad_MovingTargets"
+      }
+
+      wait{
+        time:r=1
+      }
+
+      unitRestore{
+        ressurectIfDead:b=yes
+        fullRestore:b=yes
+        target:t="Player"
+        ammoRestore:b=yes
+      }
+
+      unitMoveTo{
+        target:t="respawn_zone"
+        follow_target:b=no
+        teleportHeightType:t="target"
+        useUnitHeightForTele:b=yes
+        shouldKeepFormation:b=no
+        teleportHeightValue:r=1000
+        horizontalDirectionForTeleport:b=yes
+        object:t="Player"
+        move_type:t="teleport"
+        follow_offset:p3=0, 0, 0
+        getToLOS:b=no
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_RestorePlayerTank_HotKey{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ONE_BY_ONE"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.01
+      }
+    }
+
+    conditions{
+      playerShortcutPressed{
+        control:t="ID_REPAIR_TANK"
+      }
+    }
+
+    actions{
+      unitRestore{
+        ressurectIfDead:b=no
+        fullRestore:b=yes
+        target:t="Player"
+        ammoRestore:b=yes
+      }
+
+      playHint{
+        hintType:t="custom"
+        name:t="tank_restored_msg"
+        action:t="show"
+        shouldFadeOut:b=yes
+        time:r=2
+        priority:i=0
+        shouldBlink:b=no
+        targets:t="Player"
+      }
+    }
+
+    else_actions{
+      playHint{
+        hintType:t="custom"
+        name:t="tank_restored_msg"
+        action:t="hide"
+        shouldFadeOut:b=yes
+        time:r=2
+        priority:i=0
+        targets:t=""
+      }
+    }
+  }
+
+  Trigger_FastReloadMode_HotKey_ON{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ONE_BY_ONE"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.01
+      }
+    }
+
+    conditions{
+      playerShortcutPressed{
+        control:t="ID_FLAPS"
+      }
+    }
+
+    actions{
+      varModify{
+        operator:t="inv"
+        value:r=1
+        var:t="bFastRldMode"
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_RespawnAllUnits_HotKey{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ONE_BY_ONE"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.01
+      }
+    }
+
+    conditions{
+      playerShortcutPressed{
+        control:t="ID_AIR_BRAKE"
+      }
+    }
+
+    actions{
+      unitRestore{
+        ressurectIfDead:b=yes
+        fullRestore:b=yes
+        target:t="squad_GermanTanks"
+        target:t="squad_USSRTanks"
+        target:t="squad_USATanks"
+        target:t="squad_UKTanks"
+        ammoRestore:b=yes
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_CheckFastReloadMode{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ALL"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=1
+      }
+    }
+
+    conditions{
+      varCompareBool{
+        var_value:t="bFastRldMode"
+        value:b=yes
+        comparasion_func:t="equal"
+      }
+    }
+
+    actions{
+      unitRestore{
+        ressurectIfDead:b=no
+        fullRestore:b=no
+        target:t="Player"
+        ammoRestore:b=yes
+      }
+
+      playHint{
+        hintType:t="custom"
+        name:t="fastreload_mode_msg"
+        action:t="show"
+        shouldFadeOut:b=no
+        time:r=-1
+        priority:i=0
+        targets:t="Player"
+      }
+    }
+
+    else_actions{
+      playHint{
+        hintType:t="custom"
+        name:t="fastreload_mode_msg"
+        action:t="hide"
+        shouldFadeOut:b=no
+        time:r=-1
+        priority:i=0
+        targets:t="Player"
+      }
+    }
+  }
+
+  Trigger_ShowGermanTanks{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ALL"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.1
+      }
+    }
+
+    conditions{
+      playersWhenInArea{
+        math:t="2D"
+        players:t="isAlive"
+        check_players:t="any"
+        object_marking:i=0
+        target_type:t="isAlive"
+        check_period:r=1
+        target:t="area_German"
+        target:t="area_German01"
+      }
+    }
+
+    actions{
+      unitWakeUp{
+        target:t="squad_GermanTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_USSRTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_USATanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_UKTanks"
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_ShowUssrTanks{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ALL"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.1
+      }
+    }
+
+    conditions{
+      playersWhenInArea{
+        math:t="2D"
+        players:t="isAlive"
+        check_players:t="any"
+        object_marking:i=0
+        target_type:t="isAlive"
+        check_period:r=1
+        target:t="area_Ussr"
+        target:t="area_Ussr01"
+      }
+    }
+
+    actions{
+      unitWakeUp{
+        target:t="squad_USSRTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_GermanTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_USATanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_UKTanks"
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_ShowUsaTanks{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ALL"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.1
+      }
+    }
+
+    conditions{
+      playersWhenInArea{
+        math:t="2D"
+        players:t="isAlive"
+        check_players:t="any"
+        object_marking:i=0
+        target_type:t="isAlive"
+        check_period:r=1
+        target:t="area_Usa"
+        target:t="area_Usa01"
+      }
+    }
+
+    actions{
+      unitWakeUp{
+        target:t="squad_USATanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_USSRTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_GermanTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_UKTanks"
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_ShowUKTanks{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ALL"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.1
+      }
+    }
+
+    conditions{
+      playersWhenInArea{
+        math:t="2D"
+        players:t="isAlive"
+        check_players:t="any"
+        object_marking:i=0
+        target_type:t="isAlive"
+        check_period:r=1
+        target:t="area_Uk1"
+        target:t="area_Uk02"
+      }
+    }
+
+    actions{
+      unitWakeUp{
+        target:t="squad_UKTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_USSRTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_GermanTanks"
+      }
+
+      unitPutToSleep{
+        target:t="squad_USATanks"
+      }
+    }
+
+    else_actions{
+    }
+  }
+
+  Trigger_HotKey_Teleport{
+    is_enabled:b=yes
+    comments:t=""
+
+    props{
+      actionsType:t="PERFORM_ONE_BY_ONE"
+      conditionsType:t="ALL"
+      enableAfterComplete:b=yes
+    }
+
+    events{
+      periodicEvent{
+        time:r=0.01
+      }
+    }
+
+    conditions{
+      playerShortcutPressed{
+        control:t="ID_GEAR"
+      }
+    }
+
+    actions{
+      unitMoveTo{
+        target:t="teleport_1"
+        follow_target:b=no
+        teleportHeightType:t="target"
+        useUnitHeightForTele:b=yes
+        shouldKeepFormation:b=no
+        teleportHeightValue:r=1000
+        horizontalDirectionForTeleport:b=yes
+        object:t="Player"
+        move_type:t="teleport"
+        follow_offset:p3=0, 0, 0
+        getToLOS:b=no
+        lookat:t="pz III F"
+      }
+    }
+
+    else_actions{
+    }
+  }
+}
+
+mission_objectives{
+  isCategory:b=yes
+  is_enabled:b=yes
+}
+
+variables{
+  bFastRldMode:b=no
+  bShowTankModules:b=yes
+}
+
+dialogs{
+}
+
+airfields{
+}
+
+effects{
+}
+
+units{
+  
+  
+//Dodaj_tenkove
+
+  
+
+  
+  
+//Dodaj_tenkove_u_squad
+
+    squad{
+    name:t="squad_GermanTanks"
+    tm:m=[[-1.74471e-020, 4.59023e-041, -1.74471e-020] [4.59023e-041, 1.4013e-045, 0] [1.83067e-039, 0, -5.58671e-015] [1923.04, 221.387, 1965.38]]
+
+    props{
+    //Dodaj_nemacke_tenkove_u_squad
+    
+      
+    }
+  }
+
+  squad{
+    name:t="squad_USSRTanks"
+    tm:m=[[-1.3422e-014, 4.59023e-041, -1.3422e-014] [4.59023e-041, 1.4013e-045, 0] [1.83067e-039, 0, -5.21349e-018] [1904.51, 217.239, 1768.97]]
+
+    props{
+      //Dodaj_ruske_tenkove_u_squad
+      
+      
+    }
+  }
+  
+   squad{
+    name:t="squad_USATanks"
+    tm:m=[[-1.86645e-018, 4.59023e-041, -1.86646e-018] [4.59023e-041, 1.4013e-045, 0] [1.83067e-039, 0, -2.12031e-016] [2230.75, 217.239, 1987.32]]
+
+    props{
+      //Dodaj_americke_tenkove_u_squad
+      
+  
+    }
+  }
+
+  squad{
+    name:t="squad_UKTanks"
+    tm:m=[[-1.25464e-008, 4.59023e-041, -1.25464e-008] [4.59023e-041, 1.4013e-045, 0] [1.83067e-039, 0, -2.12031e-016] [2171.65, 217.24, 1798.22]]
+
+    props{
+      //Dodaj_britanske_tenkove_u_squad
+      
+  
+    }
+  }
+
+  
+}
+
+areas{
+  area_German{
+    type:t="Cylinder"
+    tm:m=[[1.92399, 0, -14.6142] [0, 11.3357, 0] [14.6142, 0, 1.92399] [1774.74, 214.679, 1864.2]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_Ussr{
+    type:t="Cylinder"
+    tm:m=[[1.92399, 0, -14.6142] [0, 11.3357, 0] [14.6142, 0, 1.92399] [1775.44, 214.201, 1816.41]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_Usa{
+    type:t="Cylinder"
+    tm:m=[[1.92399, 0, -14.6142] [0, 11.3357, 0] [14.6142, 0, 1.92399] [1774.74, 212.291, 1769.28]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_German01{
+    type:t="Cylinder"
+    tm:m=[[-10.4229, 0, -10.4229] [0, 11.3357, 0] [10.4229, 0, -10.4229] [1899.26, 212.543, 1891.51]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_Ussr01{
+    type:t="Cylinder"
+    tm:m=[[13.3592, 0, 6.22951] [0, 11.3357, 0] [-6.22951, 0, 13.3592] [1951.42, 213.909, 1843.95]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_Usa01{
+    type:t="Cylinder"
+    tm:m=[[-12.0745, 0, 8.45467] [0, 11.3357, 0] [-8.45467, 0, -12.0745] [2106.25, 212.532, 1919.47]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  respawn_zone{
+    type:t="Point"
+    tm:m=[[-1, 0, -1.50996e-007] [0, 1, 0] [1.50996e-007, 0, -1] [1755.45, 217.265, 1558.63]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_Uk1{
+    type:t="Cylinder"
+    tm:m=[[-12.0745, 0, 8.45467] [0, 11.3357, 0] [-8.45467, 0, -12.0745] [2083.45, 212.532, 1851.92]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  area_Uk02{
+    type:t="Cylinder"
+    tm:m=[[3.19036, 0, -14.3909] [0, 11.3357, 0] [14.3909, 0, 3.19036] [1772.11, 212.532, 1729.08]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+
+  teleport_1{
+    type:t="Point"
+    tm:m=[[-1, 0, -1.50996e-007] [0, 1, 0] [1.50996e-007, 0, -1] [2003.58, 217.265, 1871.37]]
+    objLayer:i=0
+
+    props{
+    }
+  }
+}
+
+objLayers{
+  layer{
+    enabled:b=yes
+  }
+
+  layer{
+    enabled:b=yes
+  }
+
+  layer{
+    enabled:b=yes
+  }
+
+  layer{
+    enabled:b=yes
+  }
+}
+
+wayPoints{
+  way_points_01{
+    closed_waypoints:b=no
+
+    way{
+    }
+  }
+}
