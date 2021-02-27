@@ -1,2 +1,2 @@
 # WarThunderGilardsTankPoligonCustomizer
-# Project is from 2016.
+Project is from 2016.
